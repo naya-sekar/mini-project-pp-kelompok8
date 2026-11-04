@@ -1,31 +1,43 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <cstdlib>
 #include <cmath>
 using namespace std;
 
 const int MAKS = 100;
 
-// ---------- Fungsi input yang aman ----------
+// ---------- Input yang aman ----------
+
+// Baca satu baris, buang spasi/\r di ujung. Kalau input habis, hentikan program.
+string ambilBaris(const string& pesan) {
+    cout << pesan;
+    string s;
+    if (!getline(cin, s)) {
+        cout << "\nInput berakhir (EOF), program dihentikan.\n";
+        exit(1);
+    }
+    size_t awal = s.find_first_not_of(" \t\r\n");
+    if (awal == string::npos) return "";
+    size_t akhir = s.find_last_not_of(" \t\r\n");
+    return s.substr(awal, akhir - awal + 1);
+}
 
 string bacaNama(const string& pesan) {
     string s;
     do {
-        cout << pesan;
-        getline(cin, s);
+        s = ambilBaris(pesan);
+        if (s.empty()) cout << "Nama tidak boleh kosong.\n";
     } while (s.empty());
     return s;
 }
 
 double bacaDouble(const string& pesan, double minimal, double maksimal) {
     while (true) {
-        cout << pesan;
-        string baris;
-        getline(cin, baris);
+        string baris = ambilBaris(pesan);
         istringstream iss(baris);
         double nilai;
-        char sisa;
-        if ((iss >> nilai) && !(iss >> sisa) && nilai >= minimal && nilai <= maksimal) {
+        if ((iss >> nilai) && iss.eof() && nilai >= minimal && nilai <= maksimal) {
             return nilai;
         }
         cout << "Input tidak valid (harus angka " << minimal << "-" << maksimal
@@ -35,13 +47,10 @@ double bacaDouble(const string& pesan, double minimal, double maksimal) {
 
 int bacaInt(const string& pesan, int minimal, int maksimal) {
     while (true) {
-        cout << pesan;
-        string baris;
-        getline(cin, baris);
+        string baris = ambilBaris(pesan);
         istringstream iss(baris);
         int nilai;
-        char sisa;
-        if ((iss >> nilai) && !(iss >> sisa) && nilai >= minimal && nilai <= maksimal) {
+        if ((iss >> nilai) && iss.eof() && nilai >= minimal && nilai <= maksimal) {
             return nilai;
         }
         cout << "Input tidak valid (bilangan bulat " << minimal << "-" << maksimal
@@ -63,6 +72,7 @@ double tambahPajak(double nilai, double persen) {
     return nilai * (1 + persen / 100);
 }
 
+// Bulatkan ke atas ke satuan rupiah. Toleransi 1e-6 menahan error floating point
 long long bulatkanKeAtas(double nilai) {
     return (long long) ceil(nilai - 1e-6);
 }
