@@ -1,4 +1,4 @@
-﻿# mini-project-pp-kelompok8
+﻿# SPLIT BILL SYSTEM
  Kelompok 8
 
  1. ⭐ Muhammad Abizar Saputra (2617051043)
