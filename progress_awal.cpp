@@ -1,9 +1,55 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <cmath>
 using namespace std;
 
 const int MAKS = 100;
+
+// ---------- Fungsi input yang aman ----------
+
+string bacaNama(const string& pesan) {
+    string s;
+    do {
+        cout << pesan;
+        getline(cin, s);
+    } while (s.empty());
+    return s;
+}
+
+double bacaDouble(const string& pesan, double minimal, double maksimal) {
+    while (true) {
+        cout << pesan;
+        string baris;
+        getline(cin, baris);
+        istringstream iss(baris);
+        double nilai;
+        char sisa;
+        if ((iss >> nilai) && !(iss >> sisa) && nilai >= minimal && nilai <= maksimal) {
+            return nilai;
+        }
+        cout << "Input tidak valid (harus angka " << minimal << "-" << maksimal
+             << "), coba lagi.\n";
+    }
+}
+
+int bacaInt(const string& pesan, int minimal, int maksimal) {
+    while (true) {
+        cout << pesan;
+        string baris;
+        getline(cin, baris);
+        istringstream iss(baris);
+        int nilai;
+        char sisa;
+        if ((iss >> nilai) && !(iss >> sisa) && nilai >= minimal && nilai <= maksimal) {
+            return nilai;
+        }
+        cout << "Input tidak valid (bilangan bulat " << minimal << "-" << maksimal
+             << "), coba lagi.\n";
+    }
+}
+
+// ---------- Perhitungan ----------
 
 double bagiRata(double totalBersama, int jumlahOrang) {
     return totalBersama / jumlahOrang;
@@ -17,7 +63,6 @@ double tambahPajak(double nilai, double persen) {
     return nilai * (1 + persen / 100);
 }
 
-// Bulatkan ke atas ke satuan rupiah. Toleransi 1e-6 menahan error floating point
 long long bulatkanKeAtas(double nilai) {
     return (long long) ceil(nilai - 1e-6);
 }
@@ -53,40 +98,25 @@ int main() {
     string nama[MAKS];
     double pribadi[MAKS], dp[MAKS];
     long long tagihan[MAKS];
-    int jumlah;
 
-    do {
-        cout << "Jumlah orang (minimal 1): ";
-        cin >> jumlah;
-    } while (jumlah < 1 || jumlah > MAKS);
+    int jumlah = bacaInt("Jumlah orang (1-100): ", 1, MAKS);
 
     for (int i = 0; i < jumlah; i++) {
-        cout << "Nama orang ke-" << i + 1 << ": ";
-        cin >> nama[i];
-        cout << "Total pesanan pribadi: ";
-        cin >> pribadi[i];
-        cout << "Uang muka (DP): ";
-        cin >> dp[i];
+        nama[i]    = bacaNama("Nama orang ke-" + to_string(i + 1) + ": ");
+        pribadi[i] = bacaDouble("Total pesanan pribadi: ", 0, 1e12);
+        dp[i]      = bacaDouble("Uang muka (DP): ", 0, 1e12);
     }
 
     int idxPenalang;
     do {
-        string namaPenalang;
-        cout << "Nama penalang (harus ada di daftar): ";
-        cin >> namaPenalang;
+        string namaPenalang = bacaNama("Nama penalang (harus ada di daftar): ");
         idxPenalang = cariIndeks(nama, jumlah, namaPenalang);
         if (idxPenalang == -1) cout << "Nama tidak ditemukan, coba lagi.\n";
     } while (idxPenalang == -1);
 
-    double totalBersama, persenDiskon, persenPajak;
-    cout << "Total pesanan bersama: ";
-    cin >> totalBersama;
-    do {
-        cout << "Diskon (%) 0-100: ";
-        cin >> persenDiskon;
-    } while (persenDiskon < 0 || persenDiskon > 100);
-    cout << "Pajak dan layanan (%): ";
-    cin >> persenPajak;
+    double totalBersama = bacaDouble("Total pesanan bersama: ", 0, 1e12);
+    double persenDiskon = bacaDouble("Diskon (%) 0-100: ", 0, 100);
+    double persenPajak  = bacaDouble("Pajak dan layanan (%): ", 0, 100);
 
     double bagian = bagiRata(totalBersama, jumlah);
     for (int i = 0; i < jumlah; i++) {
