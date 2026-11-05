@@ -50,3 +50,22 @@ int bacaInt(const string& pesan, int minimal, int maksimal) {
              << "), coba lagi.\n";
     }
 }
+
+// ---------- Perhitungan ----------
+
+double bagiRata(double totalBersama, int jumlahOrang) {
+    return totalBersama / jumlahOrang;
+}
+
+double hitungDiskon(double dasar, double persenDiskon) {
+    return dasar * persenDiskon / 100;
+}
+
+double tambahPajak(double nilai, double persen) {
+    return nilai * (1 + persen / 100);
+}
+
+// Bulatkan ke atas ke satuan rupiah. Toleransi 1e-6 menahan error floating point
+long long bulatkanKeAtas(double nilai) {
+    return (long long) ceil(nilai - 1e-6);
+}
